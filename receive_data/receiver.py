@@ -1,6 +1,7 @@
 import paho.mqtt.client as mqtt
 
 topic = "ECEM119_knockbox_project"
+count = 0 # count per 1024 samples
 
 class mqtt_publisher():
     # 0. define callbacks - functions that run when events happen.

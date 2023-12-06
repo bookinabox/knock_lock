@@ -1,6 +1,22 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
 #include <Arduino_LSM6DS3.h>
+#include <ArduinoJson.h>
+// these constants won't change:
+const int piezo0 = A0; // top
+const int piezo1 = A1; // front
+const int piezo2 = A2; 
+const int numSamp = 1024;
+const int threshold = 400000;   // threshold value to decide when the detected sound is a knock or not
+
+int knockData0[numSamp];
+int knockData1[numSamp];
+int knockData2[numSamp];
+
+// these variables will change:
+int sensor0 = 0;  // variable to store the value read from the sensor pin
+int sensor1 = 0;  // variable to store the value read from the sensor pin
+int sensor2 = 0;  // variable to store the value read from the sensor pin
 
 // WiFi
 const char *ssid = "abc123"; // Enter your WiFi name
@@ -51,16 +67,15 @@ void setup() {
 
 void loop()
 {
-  output = "";
   readValues();
-
-  client.publish(topic, output.c_str());
 }
 
 void readValues() {
+  output = "";
+  output += sensor0;
+  output += ";"
   output += sensor1;
   output += ";"
   output += sensor2;
-  output += ";"
-  output += sensor3;
+  client.publish(topic, output.c_str());
 }
