@@ -11,6 +11,7 @@ const char *mqtt_broker = "mqtt.eclipseprojects.io";
 const char *topic = "ECEM119_knockbox_project";
 const int mqtt_port = 1883;
 
+String output = "";
 int counter = 0;
 
 WiFiClient espClient;
@@ -50,50 +51,16 @@ void setup() {
 
 void loop()
 {
-  displayIMU();
-  // witholding the delay below will crash client such that it cannot receive anymore values
-  // increase values if client is crashing
-  delay(40); // 40 is a good minimum value
-}
+  output = "";
+  readValues();
 
-void clientPublish(String output, float num) {
-  output += num;
   client.publish(topic, output.c_str());
 }
 
-void displayIMU() {
-  float x, y, z;
-
-  String output = "";
-  bool first = false, second = false;
-  if (IMU.accelerationAvailable()) {
-    IMU.readAcceleration(x, y, z);
-
-    output += "Acceleration,x,";
-    output += x;
-    output += ";Acceleration,y,";
-    output += y;
-    output += ";Acceleration,z,";
-    output += z;
-
-    first = true;
-  }
-
-  if (IMU.gyroscopeAvailable()) {
-    IMU.readGyroscope(x, y, z);
-
-    output += ";Gyroscope,x,";
-    output += x;
-    output += ";Gyroscope,y,";
-    output += y;
-    output += ";Gyroscope,z,";
-    output += z;
-
-    second = true;
-  }
-
-  if (first && second) {
-    Serial.println(output);
-    client.publish(topic, output.c_str());
-  }
+void readValues() {
+  output += sensor1;
+  output += ";"
+  output += sensor2;
+  output += ";"
+  output += sensor3;
 }

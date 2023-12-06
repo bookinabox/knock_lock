@@ -24,15 +24,8 @@ class mqtt_publisher():
         message = str(message.payload)[2:-1]
         # print('Received message: ', message)
         data = message.split(';')
-
-        mappings = {'Acceleration': {}, 'Gyroscope': {}}
-        for d in data:
-            degree, axis, value = d.split(',')
-            mappings[degree][axis] = float(value)
-
-        global data_out
-        data_out = mappings
-                
+        
+        print(data[0], data[1], data[2])
     # 1. create a client instance.
     client = mqtt.Client()
     # add additional client options (security, certifications, etc.)
