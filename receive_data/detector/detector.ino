@@ -1,7 +1,6 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
 #include <Arduino_LSM6DS3.h>
-#include <ArduinoJson.h>
 // these constants won't change:
 const int piezo0 = A0; // top
 const int piezo1 = A1; // front
@@ -35,7 +34,7 @@ PubSubClient client(espClient);
 
 void setup() {
  // Set software serial baud to 115200;
-	Serial.begin(115200);
+	Serial.begin(38400);
 	while (!Serial) delay(10); // delay until serial is connected
 	// connecting to a WiFi network
 
@@ -68,14 +67,28 @@ void setup() {
 void loop()
 {
   readValues();
+  if (counter >= 4) {
+    Serial.println("DATA SENT!");
+    client.publish(topic, output.c_str());
+    output = "";
+    counter = 0;
+  }
 }
 
 void readValues() {
-  output = "";
-  output += sensor0;
-  output += ";"
-  output += sensor1;
-  output += ";"
-  output += sensor2;
-  client.publish(topic, output.c_str());
+  sensor0 = analogRead(piezo0);
+  sensor1 = analogRead(piezo1);
+  sensor2 = analogRead(piezo2);
+
+  if (sensor0*sensor0 + sensor1*sensor1 + sensor2*sensor2 > threshold) {
+    output += sensor0;
+    output += ";";
+    output += sensor1;
+    output += ";";
+    output += sensor2;
+    output += ";";
+    Serial.println(output);
+    counter++;
+  }
+  
 }

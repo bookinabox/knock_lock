@@ -1,16 +1,15 @@
 import paho.mqtt.client as mqtt
+import numpy as np
+import time
 
-topic = "ECEM119_knockbox_project"
-count = 0 # count per 1024 samples
-
-class mqtt_publisher():
+def mqtt_publisher():
     # 0. define callbacks - functions that run when events happen.
     # The callback for when the client receives a CONNACK response from the server.
     def on_connect(client, userdata, flags, rc):
         print("Connection returned result: " + str(rc))
         # Subscribing in on_connect() means that if we lose the connection and
         # reconnect then subscriptions will be renewed.
-        client.subscribe(topic)
+        client.subscribe("ECEM119_knockbox_project")
         # The callback of the client when it disconnects.
 
     def on_disconnect(client, userdata, rc):
@@ -22,11 +21,9 @@ class mqtt_publisher():
         # (won't be used if only publishing, but can still exist)
 
     def on_message(client, userdata, message):
-        message = str(message.payload)[2:-1]
-        # print('Received message: ', message)
-        data = message.split(';')
-        
-        print(data[0], data[1], data[2])
+        print('Received message: ', str(message.payload)[2:-1])
+        # time.sleep(2)
+                
     # 1. create a client instance.
     client = mqtt.Client()
     # add additional client options (security, certifications, etc.)
@@ -42,12 +39,19 @@ class mqtt_publisher():
 
     # 3. call one of the loop*() functions to maintain network traffic flow with the broker.
     client.loop_start()
-
     # 4. use subscribe() to subscribe to a topic and receive messages.
     # 5. use publish() to publish messages to the broker.
     # payload must be a string, bytearray, int, float or None.
     #client.publish("ECEM119", curr, qos=1)
 
+    while True:
+        pass
     # 6. use disconnect() to disconnect from the broker.
-    # client.loop_stop()
-    # client.disconnect()
+    client.loop_stop()
+    client.disconnect()
+
+def main():
+    mqtt_publisher()
+
+if __name__ == '__main__':
+    main()
